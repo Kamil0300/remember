@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>For my pacar 💚</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu 💚</title>
 
 <style>
 :root{
@@ -51,38 +52,37 @@ body{
     z-index:1;
 }
 
-/* ===== SLIDER ===== */
-.wrapper{
+/* ===== LAYOUT ===== */
+.container{
     position:relative;
-    display:flex;
-    width:200%;
-    height:100%;
-    transition:transform .8s ease;
     z-index:2;
-    touch-action:none;
-    user-select:none;
-}
-
-.page{
-    width:100%;
+    height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
+    padding:16px;
 }
 
-/* ===== CARD ===== */
 .card{
     background:rgba(255,255,255,.95);
-    width:90%;
-    max-width:460px;
-    padding:32px;
+    width:100%;
+    max-width:520px;
+    padding:28px;
     border-radius:18px;
-    box-shadow:0 18px 40px rgba(0,0,0,.35);
     text-align:center;
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+    animation:fade .5s ease;
+}
+
+@keyframes fade{
+    from{opacity:0; transform:scale(.96)}
+    to{opacity:1; transform:scale(1)}
 }
 
 h1{
+    margin-top:0;
     color:var(--dark);
+    font-size:22px;
 }
 
 p{
@@ -95,12 +95,13 @@ p{
 /* ===== BUTTON ===== */
 button{
     margin-top:22px;
-    padding:12px 26px;
+    padding:14px;
+    width:100%;
     border:none;
     border-radius:14px;
     background:var(--primary);
     color:#fff;
-    font-size:14px;
+    font-size:15px;
     cursor:pointer;
     transition:.3s;
 }
@@ -112,47 +113,29 @@ button:hover{
 /* ===== GALLERY ===== */
 .gallery{
     display:grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns:repeat(2,1fr);
     gap:14px;
-    margin-top:20px;
+    margin-top:18px;
 }
 
 .photo{
-    width:100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio:4/3;
     overflow:hidden;
     border-radius:14px;
     box-shadow:0 10px 22px rgba(0,0,0,.25);
-    background:#eee;
 }
 
 .photo img{
     width:100%;
     height:100%;
     object-fit:cover;
-    display:block;
 }
 
-/* responsive */
-@media (max-width:480px){
-    .gallery{
-        grid-template-columns:1fr;
-    }
-}
-
-.gallery img{
-    width:100%;
-    border-radius:14px;
-    box-shadow:0 12px 28px rgba(0,0,0,.3);
-}
-
-.back{
-    background:#ddd;
-    color:#333;
-}
-
-.back:hover{
-    background:#bbb;
+/* ===== RESPONSIVE ===== */
+@media(max-width:480px){
+    h1{font-size:20px}
+    p{font-size:14px}
+    .gallery{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -162,116 +145,82 @@ button:hover{
 <div class="rain"></div>
 <div class="lightning" id="lightning"></div>
 
-<audio id="rainSound" src="rain.mp4" loop></audio>
+<audio id="rainSound" src="rain.mp3" loop></audio>
 
-<div class="wrapper" id="slider">
+<div class="container">
+    <div class="card" id="card">
 
-    <!-- PAGE 1 -->
-    <div class="page">
-        <div class="card">
-            <h1>BUKTI KALO AKU PACAR KAMU 💚</h1>
-            <p id="text1"></p>
-            <button onclick="nextPage()">Lihat Bukti 📸</button>
+        <h1 id="title">PERNYATAAN 💚</h1>
+        <p id="text"></p>
+
+        <div class="gallery" id="gallery" style="display:none">
+            <div class="photo"><img src="images/foto1.jpeg"></div>
+            <div class="photo"><img src="images/foto2.jpeg"></div>
+            <div class="photo"><img src="images/foto3.jpeg"></div>
+            <div class="photo"><img src="images/foto4.jpeg"></div>
         </div>
-    </div>
 
-    <!-- PAGE 2 -->
-    <div class="page">
-        <div class="card">
-            <h1>Bukti Itu Ada 🌧️</h1>
-            <p id="text2"></p>
+        <button id="btn" onclick="next()">Lihat Bukti 📸</button>
 
-            <div class="gallery">
-    <div class="photo">
-        <img src="images/foto1.jpeg" alt="Kenangan 1">
     </div>
-    <div class="photo">
-        <img src="images/foto2.jpeg" alt="Kenangan 2">
-    </div>
-    <div class="photo">
-        <img src="images/foto3.jpeg" alt="Kenangan 3">
-    </div>
-    <div class="photo">
-        <img src="images/foto4.jpeg" alt="Kenangan 4">
-    </div>
-</div>
-
-
-            <button class="back" onclick="prevPage()">Kembali ↩</button>
-        </div>
-    </div>
-
 </div>
 
 <script>
 /* ===== BACKSOUND ===== */
-const audio = document.getElementById("rainSound");
-document.body.addEventListener("click", () => {
-    audio.volume = 0.3;
-    audio.play();
-},{ once:true });
+document.body.addEventListener("click",()=>{
+    const a=document.getElementById("rainSound");
+    a.volume=0.3;
+    a.play();
+},{once:true});
 
 /* ===== TYPEWRITER ===== */
-function typeText(el, text){
-    el.innerHTML="";
+const textEl=document.getElementById("text");
+function typeText(text){
+    textEl.innerHTML="";
     let i=0;
-    const timer=setInterval(()=>{
-        el.innerHTML += text[i];
+    const t=setInterval(()=>{
+        textEl.innerHTML+=text[i];
         i++;
-        if(i>=text.length) clearInterval(timer);
+        if(i>=text.length) clearInterval(t);
     },35);
 }
 
-typeText(
-    document.getElementById("text1"),
-    "Di tengah hujan dan semua diam yang panjang, aku ingin jujur. Perasaanku ke kamu tidak pernah berubah, dan aku ingin membuktikannya."
-);
+/* ===== CONTENT FLOW ===== */
+let step=0;
+const title=document.getElementById("title");
+const gallery=document.getElementById("gallery");
+const btn=document.getElementById("btn");
 
-/* ===== SLIDE ===== */
-function nextPage(){
-    document.getElementById("slider").style.transform="translateX(-50%)";
-    typeText(
-        document.getElementById("text2"),
-        "Setiap foto ini mungkin sederhana, tapi semuanya menyimpan cerita tentang kamu."
-    );
-}
+typeText("Di tengah hujan dan semua diam yang panjang, aku ingin jujur. Perasaanku ke kamu tidak pernah berubah, dan aku ingin membuktikannya.");
 
-function prevPage(){
-    document.getElementById("slider").style.transform="translateX(0)";
-    typeText(
-        document.getElementById("text1"),
-        "Aku ingin kamu mengingat semuanya kalo aku itu pacar kamu."
-    );
+function next(){
+    document.getElementById("card").style.animation="none";
+    void document.getElementById("card").offsetWidth;
+    document.getElementById("card").style.animation="fade .5s ease";
+
+    step++;
+
+    if(step===1){
+        title.textContent="Bukti Itu Ada 🌧️";
+        textEl.textContent="Setiap foto ini mungkin sederhana, tapi semuanya menyimpan cerita tentang kamu.";
+        gallery.style.display="grid";
+        btn.textContent="Kembali";
+    }else{
+        step=0;
+        title.textContent="Untuk Kamu 💚";
+        gallery.style.display="none";
+        typeText("Aku ingin kamu mengingat semuanya kalo aku itu pacar kamu wleee.");
+        btn.textContent="Lihat Bukti 📸";
+    }
 }
 
 /* ===== KILAT ACAK ===== */
 function lightning(){
-    const flash=document.getElementById("lightning");
-    flash.style.opacity=0.8;
-    setTimeout(()=>flash.style.opacity=0,120);
+    const l=document.getElementById("lightning");
+    l.style.opacity=.8;
+    setTimeout(()=>l.style.opacity=0,120);
 }
-
-setInterval(()=>{
-    if(Math.random()>0.7){
-        lightning();
-    }
-},4000);
-/* ===== BLOK SWIPE MANUAL ===== */
-let startX = 0;
-
-document.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-}, { passive: false });
-
-document.addEventListener("touchmove", e => {
-    e.preventDefault();
-}, { passive: false });
-
-document.addEventListener("wheel", e => {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        e.preventDefault();
-    }
-}, { passive: false });
+setInterval(()=>{if(Math.random()>0.7) lightning()},4000);
 </script>
 
 </body>
